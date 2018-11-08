@@ -583,7 +583,8 @@ void SwSetExpFieldType::SetSeqRefNo( SwSetExpField& rField )
     rField.SetSeqNumber( n );
 }
 
-size_t SwSetExpFieldType::GetSeqFieldList( SwSeqFieldList& rList )
+size_t SwSetExpFieldType::GetSeqFieldList(SwSeqFieldList& rList,
+        SwRootFrame const*const pLayout)
 {
     rList.Clear();
 
@@ -596,7 +597,7 @@ size_t SwSetExpFieldType::GetSeqFieldList( SwSeqFieldList& rList )
             pNd->GetNodes().IsDocNodes() )
         {
             SeqFieldLstElem aNew(
-                    pNd->GetExpandText(nullptr/*TODO*/),
+                    pNd->GetExpandText(pLayout),
                     static_cast<SwSetExpField*>(pF->GetField())->GetSeqNumber() );
             rList.InsertSort( aNew );
         }
