@@ -22,6 +22,7 @@
 #include <txtfrm.hxx>
 #include <doc.hxx>
 #include <IDocumentUndoRedo.hxx>
+#include <IDocumentFieldsAccess.hxx>
 #include <IDocumentState.hxx>
 #include <redline.hxx>
 #include <UndoRedline.hxx>
@@ -119,6 +120,12 @@ using namespace com::sun::star;
 
 namespace sw {
 
+static void UpdateFieldsForRedline(IDocumentFieldsAccess & rIDFA)
+{
+    rIDFA.GetSysFieldType(SwFieldIds::Chapter)->UpdateFields();
+    rIDFA.UpdateRefFields();
+}
+
 void UpdateFramesForAddDeleteRedline(SwDoc & rDoc, SwPaM const& rPam)
 {
     // no need to call UpdateFootnoteNums for FTNNUM_PAGE:
@@ -148,6 +155,8 @@ void UpdateFramesForAddDeleteRedline(SwDoc & rDoc, SwPaM const& rPam)
         // node of the merged frame, there could be another redline nearby
         sw::AddRemoveFlysAnchoredToFrameStartingAtNode(*pFrame, *pStartNode, nullptr);
     }
+    // fields last - SwGetRefField::UpdateField requires up-to-date frames
+    UpdateFieldsForRedline(rDoc.getIDocumentFieldsAccess()); // after footnotes
 }
 
 void UpdateFramesForRemoveDeleteRedline(SwDoc & rDoc, SwPaM const& rPam)
@@ -205,6 +214,8 @@ void UpdateFramesForRemoveDeleteRedline(SwDoc & rDoc, SwPaM const& rPam)
             AppendAllObjs(rDoc.GetSpzFrameFormats(), pLayout);
         }
     }
+    // fields last - SwGetRefField::UpdateField requires up-to-date frames
+    UpdateFieldsForRedline(rDoc.getIDocumentFieldsAccess()); // after footnotes
 }
 
 } // namespace sw
