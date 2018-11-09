@@ -4504,6 +4504,9 @@ void SwRootFrame::SetHideRedlines(bool const bHideRedlines)
             pFootnote->InvalidateNumberInLayout();
         }
     }
+    // TODO invalidate all chapter fields etc. to re-expand them
+    rDoc.getIDocumentFieldsAccess().GetSysFieldType(SwFieldIds::Chapter)->UpdateFields();
+    rDoc.getIDocumentFieldsAccess().UpdateRefFields();
 
 //    InvalidateAllContent(SwInvalidateFlags::Size); // ??? TODO what to invalidate?  this is the big hammer
 }
